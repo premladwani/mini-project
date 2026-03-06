@@ -1,16 +1,12 @@
 let savedName = "";
 let savedRFID = "";
-
-// calendar state and events storage
 let calMonth = null;
 let calYear = null;
-let calendarEvents = {}; // key format: 'YYYY-M-D' -> note text
+let calendarEvents = {};
 
-// Sample attendance datasets (1 = present, 0 = absent)
 const weeklyLabels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 const weeklyData = [1,1,1,1,1,0,0];
 
-// Generate a deterministic monthly pattern (30 days)
 const monthlyLabels = Array.from({length:30}, (_,i)=> String(i+1));
 const monthlyData = Array.from({length:30}, (_,i)=> ((i%7===5)||(i%7===6))?0:1 );
 
@@ -50,7 +46,6 @@ function initParticles(){
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);
     camera.position.z = 400;
-    // particles
     const geometry = new THREE.BufferGeometry();
     const count = 1000;
     const positions = new Float32Array(count*3);
@@ -59,9 +54,8 @@ function initParticles(){
     const material = new THREE.PointsMaterial({color:0xffffff,size:2,transparent:true,opacity:0.6});
     const points = new THREE.Points(geometry,material);
     scene.add(points);
-    // add a rotating cube in center
     const cubeGeom = new THREE.BoxGeometry(100,100,100);
-    const cubeMat = new THREE.MeshBasicMaterial({color:0x60a5fa,wireframe:true,opacity:0.4,transparent:true});
+    const cubeMat = new THREE.MeshBasicMaterial({color:0x667eea,wireframe:true,opacity:0.4,transparent:true});
     const cube = new THREE.Mesh(cubeGeom,cubeMat);
     scene.add(cube);
     function animate(){
@@ -80,55 +74,22 @@ function initParticles(){
     animate();
 }
 
-function showWeekly(){
-    if(!savedName){ showAlert('Please submit your details first.','error'); return; }
-    playClick();
-    showAlert('Displaying weekly report','success');
-    // show weekly and overview only
-    document.getElementById('weeklyCard').style.display='';
-    document.getElementById('weeklyCard').classList.add('visible','full');
-    document.getElementById('monthlyCard').style.display='none';
-    document.getElementById('monthlyCard').classList.remove('visible','full');
-    document.getElementById('overviewCard').style.display='';
-    document.getElementById('overviewCard').classList.add('visible');
-    document.getElementById('weeklyBtn').classList.add('active');
-    document.getElementById('monthlyBtn').classList.remove('active');
-    if(!weeklyChartObj) createWeeklyChart();
-    if(!overviewChartObj) createOverviewChart();
-}
-
-function showMonthly(){
-    if(!savedName){ showAlert('Please submit your details first.','error'); return; }
-    playClick();
-    showAlert('Displaying monthly report','success');
-    document.getElementById('weeklyCard').style.display='none';
-    document.getElementById('weeklyCard').classList.remove('visible','full');
-    document.getElementById('monthlyCard').style.display='';
-    document.getElementById('monthlyCard').classList.add('visible','full');
-    document.getElementById('overviewCard').style.display='';
-    document.getElementById('overviewCard').classList.add('visible');
-    document.getElementById('monthlyBtn').classList.add('active');
-    document.getElementById('weeklyBtn').classList.remove('active');
-    if(!monthlyChartObj) createMonthlyChart();
-    if(!overviewChartObj) createOverviewChart();
-}
-
-
 function saveUser() {
     const name = document.getElementById('username').value.trim();
     const rfid = document.getElementById('rfid').value.trim();
-    if(!name || !rfid){ alert('Please fill all details.'); return; }
-    savedName = name; savedRFID = rfid;
+    if(!name || !rfid){ showAlert('Please fill all details.','error'); return; }
+    savedName = name;
+    savedRFID = rfid;
     localStorage.setItem('savedName', savedName);
     localStorage.setItem('savedRFID', savedRFID);
-    const box = document.getElementById('resultBox');
-    box.innerHTML = `Welcome, <strong>${savedName}</strong> — RFID: ${savedRFID}`;
-    box.animate([{transform:'translateY(-6px)',opacity:0.6},{transform:'translateY(0)',opacity:1}],{duration:420,easing:'ease-out'});
     updateSummary();
-    // ensure charts are created/updated after saving
-    if(!weeklyChartObj) createWeeklyChart();
-    if(!monthlyChartObj) createMonthlyChart();
+    document.getElementById('headerSubtitle').textContent = `Welcome, ${savedName}!`;
     burstConfetti();
+    setTimeout(() => {
+        if(!weeklyChartObj) createWeeklyChart();
+        if(!monthlyChartObj) createMonthlyChart();
+        if(!overviewChartObj) createOverviewChart();
+    }, 100);
 }
 
 function loadFromStorage(){
@@ -139,6 +100,7 @@ function loadFromStorage(){
         savedRFID = rfid;
         document.getElementById('username').value = name;
         document.getElementById('rfid').value = rfid;
+        document.getElementById('headerSubtitle').textContent = `Welcome, ${savedName}!`;
         updateSummary();
     }
 }
@@ -150,32 +112,12 @@ function resetDashboard(){
     localStorage.removeItem('savedRFID');
     document.getElementById('username').value = '';
     document.getElementById('rfid').value = '';
-    document.getElementById('resultBox').innerHTML = 'Attendance details will appear here.';
-    // keep charts alive but clear overview data if necessary
-    if(overviewChartObj){ overviewChartObj.destroy(); overviewChartObj=null; document.getElementById('overviewCard').style.display='none'; }
-}
-
-function applyThemeToCharts(){
-    const isDark = document.body.classList.contains('dark');
-    // weekly bar colors
-    if(weeklyChartObj){
-        const green = isDark ? 'rgba(74,222,128,0.9)' : 'rgba(34,197,94,0.9)';
-        const red = isDark ? 'rgba(248,113,113,0.9)' : 'rgba(239,68,68,0.9)';
-        weeklyChartObj.data.datasets[0].backgroundColor = weeklyData.map(v=> v?green:red);
-        weeklyChartObj.options.scales.x.ticks.color = isDark ? '#f1f5f9' : '#0f172a';
-        weeklyChartObj.options.scales.y.ticks.color = isDark ? '#f1f5f9' : '#0f172a';
-        weeklyChartObj.update();
-    }
-    if(monthlyChartObj){
-        const textColor = isDark ? '#f1f5f9' : '#0f172a';
-        monthlyChartObj.options.scales.y.ticks.color = textColor;
-        monthlyChartObj.options.scales.x.ticks.color = textColor;
-        monthlyChartObj.update();
-    }
-    if(overviewChartObj){
-        overviewChartObj.options.plugins.legend.labels.color = isDark ? '#f1f5f9' : '#0f172a';
-        overviewChartObj.update();
-    }
+    document.getElementById('resultBox').innerHTML = 'Please submit your details to view attendance summary.';
+    document.getElementById('headerSubtitle').textContent = 'Welcome back!';
+    if(overviewChartObj){ overviewChartObj.destroy(); overviewChartObj=null; }
+    if(weeklyChartObj){ weeklyChartObj.destroy(); weeklyChartObj=null; }
+    if(monthlyChartObj){ monthlyChartObj.destroy(); monthlyChartObj=null; }
+    showAlert('Dashboard reset successfully','success');
 }
 
 function toggleTheme(){
@@ -187,9 +129,7 @@ function toggleTheme(){
 function downloadReport(){
     if(!savedName){ showAlert('Submit your details to generate a report.','error'); return; }
     let csv = 'Date,Type,Value\n';
-    // weekly data (mon-sun)
     weeklyLabels.forEach((lab,i)=>{ csv += `${lab},weekly,${weeklyData[i]}\n`; });
-    // monthly data
     monthlyLabels.forEach((lab,i)=>{ csv += `${lab},monthly,${monthlyData[i]}\n`; });
     const blob = new Blob([csv],{type:'text/csv'});
     const url = URL.createObjectURL(blob);
@@ -198,9 +138,8 @@ function downloadReport(){
     a.download = `${savedName.replace(/\s+/g,'_')}_attendance.csv`;
     a.click();
     URL.revokeObjectURL(url);
-    showAlert('Report downloaded','success');
+    showAlert('Report downloaded successfully','success');
 }
-
 
 function updateSummary(){
     if(!savedName) return;
@@ -210,141 +149,159 @@ function updateSummary(){
     const weeklyPct = ((weeklyPresent/7)*100).toFixed(0);
     const monthlyPct = ((monthlyPresent/30)*100).toFixed(0);
     const box = document.getElementById('resultBox');
-    box.innerHTML = `<div>Student: <strong>${savedName}</strong></div>
-        <div>Weekly: ${weeklyPresent} present, ${7-weeklyPresent} absent (${weeklyPct}%)</div>
-        <div class="progress-bar weekly"><div class="fill" style="width:${weeklyPct}%"></div></div>
-        <div>Monthly: ${monthlyPresent} present, ${30-monthlyPresent} absent (${monthlyPct}%)</div>
-        <div class="progress-bar monthly"><div class="fill" style="width:${monthlyPct}%"></div></div>
-        <div style="margin-top:4px;font-size:12px;color:#6b7280;">Updated: ${now}</div>`;
-    if(weeklyPct < 50) showAlert('Weekly attendance below 50%!','error');
-    if(monthlyPct < 50) showAlert('Monthly attendance below 50%!','error');
+    box.innerHTML = `
+        <div><strong>Student:</strong> ${savedName}</div>
+        <div><strong>RFID:</strong> ${savedRFID}</div>
+        <div style="margin-top: 12px;"><strong>Weekly Attendance:</strong> ${weeklyPresent} present, ${7-weeklyPresent} absent (${weeklyPct}%)</div>
+        <div class="progress-bar"><div class="fill" style="width:${weeklyPct}%"></div></div>
+        <div style="margin-top: 12px;"><strong>Monthly Attendance:</strong> ${monthlyPresent} present, ${30-monthlyPresent} absent (${monthlyPct}%)</div>
+        <div class="progress-bar"><div class="fill" style="width:${monthlyPct}%"></div></div>
+        <div style="margin-top: 12px; font-size: 12px; color: #6b7280;">Updated: ${now}</div>
+    `;
+    if(weeklyPct < 50) showAlert('⚠️ Weekly attendance below 50%!','error');
+    if(monthlyPct < 50) showAlert('⚠️ Monthly attendance below 50%!','error');
 }
 
 function createOverviewChart(){
     if(overviewChartObj) return;
-    const ctx = document.getElementById('overviewChart').getContext('2d');
+    const canv = document.getElementById('overviewChart');
+    if(!canv) return;
+    const ctx = canv.getContext('2d');
     const total = monthlyData.length;
     const present = monthlyData.reduce((a,b)=>a+b,0);
     const absent = total - present;
+    const isDark = document.body.classList.contains('dark');
     overviewChartObj = new Chart(ctx,{
         type:'doughnut',
-        data:{labels:['Present','Absent'],datasets:[{data:[present,absent],backgroundColor:['#34d399','#f87171'],hoverOffset:8}]},
-        options:{animation:{animateScale:true},plugins:{legend:{position:'bottom'}}}
+        data:{
+            labels:['Present','Absent'],
+            datasets:[{
+                data:[present,absent],
+                backgroundColor: isDark ? ['#10b981','#ef4444'] : ['#10b981','#ef4444'],
+                hoverOffset:8
+            }]
+        },
+        options:{
+            responsive: true,
+            maintainAspectRatio: true,
+            animation:{animateScale:true},
+            plugins:{
+                legend:{position:'bottom',labels:{color: isDark ? '#f3f4f6' : '#1f2937'}}
+            }
+        }
     });
 }
-
 
 function createWeeklyChart(){
-    const ctx = document.getElementById('weeklyChart').getContext('2d');
-    const gradient = ctx.createLinearGradient(0,0,0,200);
-    gradient.addColorStop(0,'rgba(34,197,94,0.9)');
-    gradient.addColorStop(1,'rgba(34,197,94,0.3)');
+    const canv = document.getElementById('weeklyChart');
+    if(!canv) return;
+    const ctx = canv.getContext('2d');
+    const isDark = document.body.classList.contains('dark');
+    const gradient = ctx.createLinearGradient(0,0,0,300);
+    gradient.addColorStop(0,'rgba(102, 126, 234, 0.9)');
+    gradient.addColorStop(1,'rgba(102, 126, 234, 0.3)');
     weeklyChartObj = new Chart(ctx,{
         type:'bar',
-        data:{labels:weeklyLabels,datasets:[{label:'Present',data:weeklyData,backgroundColor:weeklyData.map(v=> v?gradient:'rgba(239,68,68,0.9)'),borderRadius:6,hoverBackgroundColor:'rgba(34,197,94,1)'}]},
-        options:{animation:{duration:1200,easing:'easeOutBounce'},plugins:{legend:{display:false},tooltip:{callbacks:{label(ctx){let val=ctx.raw;return val? 'Present':'Absent';}}}},onClick(e,items){ if(items.length){ const i=items[0].index; showAlert(`Weekly ${weeklyLabels[i]}: ${weeklyData[i]?'Present':'Absent'}`); } },scales:{y:{beginAtZero:true,max:1.2,ticks:{stepSize:1}}}}
+        data:{
+            labels:weeklyLabels,
+            datasets:[{
+                label:'Present (1) / Absent (0)',
+                data:weeklyData,
+                backgroundColor:weeklyData.map(v=> v?'rgba(102, 126, 234, 0.9)':'rgba(239, 68, 68, 0.9)'),
+                borderRadius:6,
+                hoverBackgroundColor:'rgba(102, 126, 234, 1)'
+            }]
+        },
+        options:{
+            responsive: true,
+            maintainAspectRatio: true,
+            animation:{duration:1200,easing:'easeOutBounce'},
+            plugins:{
+                legend:{display:true,labels:{color: isDark ? '#f3f4f6' : '#1f2937'}},
+                tooltip:{callbacks:{label(ctx){return ctx.raw? 'Present':'Absent';}}}
+            },
+            scales:{
+                y:{beginAtZero:true,max:1.2,ticks:{stepSize:1, color: isDark ? '#f3f4f6' : '#1f2937'},grid:{color: isDark ? '#4b5563' : '#e5e7eb'}},
+                x:{ticks:{color: isDark ? '#f3f4f6' : '#1f2937'},grid:{color: isDark ? '#4b5563' : '#e5e7eb'}}
+            }
+        }
     });
 }
 
-
 function createMonthlyChart(){
-    const ctx = document.getElementById('monthlyChart').getContext('2d');
-    const grad = ctx.createLinearGradient(0,0,0,200);
+    const canv = document.getElementById('monthlyChart');
+    if(!canv) return;
+    const ctx = canv.getContext('2d');
+    const isDark = document.body.classList.contains('dark');
+    const grad = ctx.createLinearGradient(0,0,0,300);
     grad.addColorStop(0,'rgba(59,130,246,0.5)');
     grad.addColorStop(1,'rgba(59,130,246,0.05)');
     monthlyChartObj = new Chart(ctx,{
         type:'line',
-        data:{labels:monthlyLabels,datasets:[{label:'Attendance',data:monthlyData,fill:true,backgroundColor:grad,borderColor:'rgba(59,130,246,0.95)',tension:0.3,pointRadius:4,pointHoverRadius:6}]},
-        options:{animation:{duration:1500,easing:'easeInOutQuart'},plugins:{legend:{display:false},tooltip:{callbacks:{label(ctx){const val=ctx.raw;return val? 'Present':'Absent';}}}},onClick(e,items){ if(items.length){ const i=items[0].index; showAlert(`Monthly day ${monthlyLabels[i]}: ${monthlyData[i]?'Present':'Absent'}`); } },scales:{y:{beginAtZero:true,max:1.2,ticks:{stepSize:1}}}}
+        data:{
+            labels:monthlyLabels,
+            datasets:[{
+                label:'Attendance',
+                data:monthlyData,
+                fill:true,
+                backgroundColor:grad,
+                borderColor:'rgba(102, 126, 234, 0.95)',
+                tension:0.3,
+                pointRadius:4,
+                pointHoverRadius:6,
+                pointBackgroundColor:'rgba(102, 126, 234, 1)'
+            }]
+        },
+        options:{
+            responsive: true,
+            maintainAspectRatio: true,
+            animation:{duration:1500,easing:'easeInOutQuart'},
+            plugins:{
+                legend:{display:true,labels:{color: isDark ? '#f3f4f6' : '#1f2937'}},
+                tooltip:{callbacks:{label(ctx){return ctx.raw? 'Present':'Absent';}}}
+            },
+            scales:{
+                y:{beginAtZero:true,max:1.2,ticks:{stepSize:1, color: isDark ? '#f3f4f6' : '#1f2937'},grid:{color: isDark ? '#4b5563' : '#e5e7eb'}},
+                x:{ticks:{color: isDark ? '#f3f4f6' : '#1f2937'},grid:{color: isDark ? '#4b5563' : '#e5e7eb'}}
+            }
+        }
     });
 }
 
-function createRipple(e){
-    const btn = e.currentTarget;
-    const circle = document.createElement('span');
-    const diameter = Math.max(btn.clientWidth, btn.clientHeight);
-    const radius = diameter/2;
-    circle.style.width = circle.style.height = `${diameter}px`;
-    circle.style.left = `${e.clientX - btn.getBoundingClientRect().left - radius}px`;
-    circle.style.top = `${e.clientY - btn.getBoundingClientRect().top - radius}px`;
-    circle.classList.add('ripple');
-    const existing = btn.getElementsByClassName('ripple')[0];
-    if(existing) existing.remove();
-    btn.appendChild(circle);
+function applyThemeToCharts(){
+    const isDark = document.body.classList.contains('dark');
+    if(weeklyChartObj){
+        weeklyChartObj.options.scales.x.ticks.color = isDark ? '#f3f4f6' : '#1f2937';
+        weeklyChartObj.options.scales.y.ticks.color = isDark ? '#f3f4f6' : '#1f2937';
+        weeklyChartObj.options.plugins.legend.labels.color = isDark ? '#f3f4f6' : '#1f2937';
+        weeklyChartObj.update();
+    }
+    if(monthlyChartObj){
+        monthlyChartObj.options.scales.x.ticks.color = isDark ? '#f3f4f6' : '#1f2937';
+        monthlyChartObj.options.scales.y.ticks.color = isDark ? '#f3f4f6' : '#1f2937';
+        monthlyChartObj.options.plugins.legend.labels.color = isDark ? '#f3f4f6' : '#1f2937';
+        monthlyChartObj.update();
+    }
+    if(overviewChartObj){
+        overviewChartObj.options.plugins.legend.labels.color = isDark ? '#f3f4f6' : '#1f2937';
+        overviewChartObj.update();
+    }
 }
 
-document.addEventListener('DOMContentLoaded',()=>{
-    const saveBtn = document.getElementById('saveBtn');
-    saveBtn.addEventListener('click', (e)=>{ saveUser();
-        // click animation
-        saveBtn.classList.add('clicked');
-        setTimeout(()=> saveBtn.classList.remove('clicked'),400);
-    });
-    document.getElementById('resetBtn').addEventListener('click', resetDashboard);
-    document.getElementById('downloadBtn').addEventListener('click', downloadReport);
-    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-
-    const weeklyBtn = document.getElementById('weeklyBtn');
-    const monthlyBtn = document.getElementById('monthlyBtn');
-    weeklyBtn.addEventListener('click', showWeekly);
-    monthlyBtn.addEventListener('click', showMonthly);
-    [weeklyBtn, monthlyBtn].forEach(b=> b.addEventListener('click', createRipple));
-
-    // restore theme if previously set
-    if(localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
-    // add ripple and sound effect to most action buttons
-    document.querySelectorAll('button').forEach(btn => {
-        btn.addEventListener('click', createRipple);
-        btn.addEventListener('click', playClick);
-    });
-    // restore any previously entered user
-    loadFromStorage();
-    // Initialize charts placeholders immediately (hidden initially)
-    createWeeklyChart();
-    createMonthlyChart();
-    applyThemeToCharts();
-
-    // add 3d tilt on cards
-    document.querySelectorAll('.card').forEach(card=>{
-        card.addEventListener('mousemove', e=>{
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const cx = rect.width/2;
-            const cy = rect.height/2;
-            const dx = (x-cx)/cx;
-            const dy = (y-cy)/cy;
-            const tiltX = dy * 8;
-            const tiltY = dx * 8;
-            card.style.transform = `perspective(600px) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
-        });
-        card.addEventListener('mouseleave', ()=>{ card.style.transform = ''; });
-    });
-
-    initParticles();
-    loadCalendarEvents();
-    initCalendarControls();
-    // show current month initially
-    const now = new Date();
-    showCalendar(now.getMonth(), now.getFullYear());
-    loadNotes();
-});
-
-/* helpers */
 function showAlert(msg,type='success'){
     const box = document.getElementById('alertBox');
     box.textContent = msg;
     box.className = type;
     box.style.display = 'block';
-    setTimeout(()=> box.style.display='none',3000);
+    setTimeout(()=> box.style.display='none',3500);
 }
 
-// load saved calendar events from localStorage
 function loadCalendarEvents(){
     try{
         calendarEvents = JSON.parse(localStorage.getItem('calendarEvents')||'{}');
     }catch(e){ calendarEvents = {}; }
 }
+
 function saveCalendarEvents(){
     localStorage.setItem('calendarEvents', JSON.stringify(calendarEvents));
 }
@@ -380,15 +337,15 @@ function showCalendar(month, year){
         if(isToday) cls+=' today';
         if(hasEvent) cls+=' event';
         if(weekend) cls+=' weekend';
-        html+=`<td class="${cls.trim()}">${d}</td>`;
+        html+=`<td class="${cls.trim()}" data-day="${d}">${d}</td>`;
         if((first+d)%7===0) html+='</tr><tr>';
     }
     html+='</tr></table>';
     cal.innerHTML = html;
     cal.querySelectorAll('td').forEach(td=>{
         td.addEventListener('click',()=>{
-            const txt = td.textContent.trim();
-            if(txt==='') return;
+            const txt = td.getAttribute('data-day');
+            if(!txt) return;
             cal.querySelectorAll('td').forEach(x=>x.classList.remove('selected'));
             td.classList.add('selected');
             const day = parseInt(txt,10);
@@ -402,8 +359,8 @@ function showCalendar(month, year){
                     delete calendarEvents[key];
                 }
                 saveCalendarEvents();
-                showCalendar(calMonth, calYear); // re-render to show dot
-                showAlert(`Date ${day} selected` + (note.trim()?`: ${note.trim()}`:''),'success');
+                showCalendar(calMonth, calYear);
+                showAlert(`Date ${day} saved`,'success');
             }
         });
     });
@@ -426,17 +383,75 @@ function initCalendarControls(){
     });
 }
 
+function autoSaveNotes(){
+    const text = document.getElementById('notes').value;
+    localStorage.setItem('dashboardNotes', text);
+}
+
 function saveNotes(){
     const text = document.getElementById('notes').value;
     localStorage.setItem('dashboardNotes', text);
     showAlert('Notes saved','success');
 }
+
 function loadNotes(){
     const t = localStorage.getItem('dashboardNotes')||'';
     const area = document.getElementById('notes');
     if(area) area.value = t;
 }
 
-// auto save notes every few seconds
-setInterval(saveNotes, 5000);
+function navigateSection(sectionId) {
+    // All sections are now visible, so no navigation needed
+}
 
+document.addEventListener('DOMContentLoaded',()=>{
+    // Initialize theme
+    if(localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
+
+    // Load saved data
+    loadFromStorage();
+    loadCalendarEvents();
+    loadNotes();
+
+    // Initialize calendar
+    const now = new Date();
+    showCalendar(now.getMonth(), now.getFullYear());
+    initCalendarControls();
+
+    // Form actions
+    document.getElementById('saveBtn').addEventListener('click', () => {
+        saveUser();
+        playClick();
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+        resetDashboard();
+        playClick();
+    });
+
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+        downloadReport();
+        playClick();
+    });
+
+    document.getElementById('themeToggle').addEventListener('click', () => {
+        toggleTheme();
+        playClick();
+    });
+
+    // Save notes button
+    document.querySelector('.save-notes-btn').addEventListener('click', saveNotes);
+
+    // Auto-save notes every 5 seconds (silently)
+    setInterval(autoSaveNotes, 5000);
+
+    // Initialize particles
+    initParticles();
+    
+    // Initialize all charts on load
+    setTimeout(() => {
+        if(!weeklyChartObj) createWeeklyChart();
+        if(!monthlyChartObj) createMonthlyChart();
+        if(!overviewChartObj) createOverviewChart();
+    }, 100);
+});

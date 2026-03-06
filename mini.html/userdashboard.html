@@ -7,84 +7,101 @@
     <link rel="stylesheet" href="../style.css/userdashboard.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Three.js for 3D background particles -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 </head>
 <body>
 
 <canvas id="meshCanvas" style="position:fixed;top:0;left:0;z-index:-1;"></canvas>
-<div class="scene"></div>
 
-<div class="container">
-
-    <header class="header">
-        <div class="avatar">
-            <svg viewBox="0 0 64 64" width="48" height="48" aria-hidden="true">
-                <circle cx="32" cy="20" r="12" fill="#60a5fa"></circle>
-                <path d="M8 56c0-13.255 10.745-24 24-24s24 10.745 24 24" fill="#bfdbfe"></path>
-            </svg>
+<main class="dashboard-wrapper">
+    <!-- Top Header -->
+    <header class="top-header">
+        <div class="header-left">
+            <div class="logo-icon">📊</div>
+            <div>
+                <h2>Attendance Dashboard</h2>
+                <p id="headerSubtitle">Welcome back!</p>
+            </div>
         </div>
-        <div class="title">User Dashboard</div>
+        <div class="header-actions">
+            <button id="themeToggle" class="action-btn theme-btn">🌙</button>
+            <button id="downloadBtn" class="action-btn primary">📥 Download</button>
+            <button id="resetBtn" class="action-btn danger">🔄 Reset</button>
+        </div>
     </header>
 
-    <!-- User Form -->
+    <!-- Alert Box -->
     <div id="alertBox"></div>
-    <div class="user-form">
-        <input type="text" id="username" placeholder="Enter Your Name">
-        <input type="text" id="rfid" placeholder="Enter RFID Card Number">
-        <button id="saveBtn">Submit</button>
-    </div>
 
-    <!-- Controls (tabs) -->
-    <div class="controls">
-        <button id="weeklyBtn">Weekly</button>
-        <button id="monthlyBtn">Monthly</button>
-    </div>
-
-    <!-- Additional Actions -->
-    <div class="actions">
-        <button id="resetBtn">Reset</button>
-        <button id="downloadBtn">Download Report</button>
-        <button id="themeToggle">Toggle Dark Mode</button>
-    </div>
-
-    <!-- Dashboard Content -->
-    <div class="cards">
-        <div class="card" id="summaryCard">
-            <div id="resultBox">Attendance details will appear here.</div>
+    <!-- User Form -->
+    <section class="user-form-section">
+        <div class="form-container">
+            <input type="text" id="username" placeholder="Enter Your Name" class="form-input">
+            <input type="text" id="rfid" placeholder="Enter RFID Card Number" class="form-input">
+            <button id="saveBtn" class="submit-btn">Submit</button>
         </div>
-        <div class="card" id="calendarCard">
-            <h3>Calendar</h3>
-            <div class="calendar-header">
-                <button id="prevMonth">&lt;</button>
-                <span id="monthYear"></span>
-                <button id="nextMonth">&gt;</button>
+    </section>
+
+    <!-- Main Content Grid -->
+    <div class="main-grid">
+        <!-- Summary Section -->
+        <section class="grid-section summary-section">
+            <div class="section-title">📈 Attendance Summary</div>
+            <div class="summary-card">
+                <div id="resultBox">Please submit your details to view attendance summary.</div>
             </div>
-            <div id="calendar"></div>
-        </div>
-        <div class="card" id="notesCard">
-            <h3>Notes</h3>
-            <textarea id="notes" placeholder="Write your notes..."></textarea>
-        </div>
-        <div class="card" id="overviewCard" style="display:none;">
-            <h3>Attendance Overview</h3>
-            <canvas id="overviewChart" width="200" height="200"></canvas>
-        </div>
-        <div class="card chart-card" id="weeklyCard" style="display:none;">
-            <h3>Weekly Attendance</h3>
-            <canvas id="weeklyChart" width="400" height="200"></canvas>
-        </div>
-        <div class="card chart-card" id="monthlyCard" style="display:none;">
-            <h3>Monthly Attendance</h3>
-            <canvas id="monthlyChart" width="400" height="200"></canvas>
-        </div>
-    </div>
+        </section>
 
-</div>
+        <!-- Overview Chart -->
+        <section class="grid-section chart-section">
+            <div class="section-title">📊 Overview</div>
+            <div class="chart-wrapper">
+                <canvas id="overviewChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Calendar Section -->
+        <section class="grid-section calendar-section">
+            <div class="section-title">🗓️ Calendar & Events</div>
+            <div class="calendar-container">
+                <div class="calendar-header">
+                    <button id="prevMonth" class="month-btn">◀</button>
+                    <span id="monthYear" class="month-year"></span>
+                    <button id="nextMonth" class="month-btn">▶</button>
+                </div>
+                <div id="calendar" class="calendar-grid"></div>
+            </div>
+        </section>
+
+        <!-- Weekly Chart -->
+        <section class="grid-section chart-section">
+            <div class="section-title">📅 Weekly Report</div>
+            <div class="chart-wrapper">
+                <canvas id="weeklyChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Monthly Chart -->
+        <section class="grid-section chart-section">
+            <div class="section-title">📆 Monthly Report</div>
+            <div class="chart-wrapper">
+                <canvas id="monthlyChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Notes Section -->
+        <section class="grid-section notes-section">
+            <div class="section-title">📝 Notes & Observations</div>
+            <textarea id="notes" placeholder="Write your notes here..." class="notes-textarea"></textarea>
+            <button class="save-notes-btn">💾 Save Notes</button>
+        </section>
+    </div>
+</main>
 
 <!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="script.js"></script>
+<script src="../mini.js/userdashboard.js"></script>
 </body>
 </html>
