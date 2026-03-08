@@ -7,16 +7,72 @@
 
 <!-- Link CSS (relative path to same directory) -->
 <link rel="stylesheet" href="../style.css/resource_admin.css">
+<link rel="stylesheet" href="../style.css/nav.css">
+<link rel="stylesheet" href="../style.css/footer.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-<h1>RFID Attendance – Resource Administration</h1>
+<!-- TOPBAR -->
+<div class="topbar">
+<div class="rfid-btn" onclick="toggleSidebar()">
+<div class="hamburger-menu">
+<span></span>
+<span></span>
+<span></span>
+</div>
+</div>
+</div>
 
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+<div class="sidebar-header">
+<h2>Panel</h2>
+<h2>RFID Panel</h2>
+<span class="close-btn" onclick="toggleSidebar()">✕</span>
+</div>
+
+<!-- SEARCH -->
+<div class="search">
+<input type="text" id="searchInput" placeholder="Search menu..." onkeyup="filterLinks()">
+</div>
+
+<!-- NAV LINKS -->
+<div class="nav-links">
+<a href="#" class="active">🏠 Dashboard</a>
+<a href="#">👥 User Management</a>
+<a href="#">📦 Resource Admin</a>
+<a href="#">⚙ System Config</a>
+<a href="#">📊 Reports & Export</a>
+<a href="#">🧾 Audit Logs</a>
+<a href="help.html">❓ Help</a>
+</div>
+
+<!-- LOGOUT BUTTON -->
+<div class="logout-section">
+<button class="logout-btn" onclick="handleLogout()">🚪 Logout</button>
+</div>
+
+<!-- PROFILE -->
+<div class="profile">
+<img src="https://i.pravatar.cc/100">
+<div class="profile-info">
+<div>Admin</div>
+<div style="font-size:13px;opacity:0.7;">System Manager</div>
+</div>
+</div>
+
+<button class="toggle" onclick="toggleTheme()">Toggle Theme</button>
+</div>
+
+<!-- PAGE CONTENT -->
 <div class="container">
 
+<h1>RFID Attendance – Resource Administration</h1>
+
 <div class="theme-toggle">
-<button onclick="toggleTheme()" id="themeBtn" class="btn-primary">☀ Light Mode</button>
+<button onclick="toggleTheme()" id="themeBtn" class="theme-btn">☀ Light Mode</button>
 </div>
 
 <div class="rfid-status">
@@ -81,8 +137,45 @@ Last UID: <span id="lastUID">None</span>
 
 <div class="toast" id="toast"></div>
 
+<!-- ================= SMART RFID FOOTER ================= -->
+<footer class="srfid-footer" aria-label="Site footer">
+  <div class="srfid-footer-container" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;align-items:start;padding-left:24px;margin-left:0;width:100%;max-width:none;">
+    <div class="srfid-footer-col srfid-footer-left" style="justify-self:start;margin-left:0;padding-left:0;">
+      <h3><span class="footer-icon">🏢</span> <span class="footer-brand">SmartRFID Technologies Pvt. Ltd.</span></h3>
+      <div class="footer-muted">🔒 Secure & Intelligent Attendance Solutions</div>
+      <div class="footer-section-title">📞 Contact & Support</div>
+      <div class="footer-contact-row"><span class="footer-icon">✉️</span> support@smartrfid.com</div>
+      <div class="footer-contact-row"><span class="footer-icon">📱</span> +91-99999 99999</div>
+      <div class="footer-contact-row"><span class="footer-icon">⏰</span> Mon–Sat | 9:00 AM – 6:00 PM</div>
+      <div class="footer-contact-row">
+        
+      </div>
+    </div>
+    <div class="srfid-footer-col srfid-footer-center" style="justify-self:center;">
+      <div class="footer-section-title">🔗 Quick Navigation</div>
+      <ul class="footer-nav-list">
+        <li><span class="footer-dot"></span> <span class="footer-icon">📊</span> <a href="#">Dashboard</a></li>
+        <li><span class="footer-dot"></span> <span class="footer-icon">🧾</span> <a href="#">Attendance Logs</a></li>
+        <li><span class="footer-dot"></span> <span class="footer-icon">📈</span> <a href="#">Reports</a></li>
+        <li><span class="footer-dot"></span> <span class="footer-icon">🖥️</span> <a href="#">Device Management</a></li>
+        <li><span class="footer-dot"></span> <span class="footer-icon">🔍</span> <a href="#">Audit Logs</a></li>
+        <li><span class="footer-dot"></span> <span class="footer-icon">👤</span> <a href="#">Admin Panel</a></li>
+      </ul>
+    </div>
+    <div class="srfid-footer-col srfid-footer-right" style="justify-self:end;margin-right:0;padding-right:0;width:100%;">
+      <div class="footer-section-title">🛰️ System Info</div>
+      <div class="footer-info-row">Version: <b>2.3.1</b> <span class="footer-small">(Last updated 2026-02-15)</span></div>
+      <div class="footer-info-row">Server: <span class="footer-status">Operational</span></div>
+      <div class="footer-info-row">Current Time: <span id="footerTime" class="footer-small"></span></div>
+      </div>
+    </div>
+  </div>
+</footer>
+
 <!-- Link JavaScript (deferred to ensure DOM ready) -->
-<script src="./resource_admin.js" defer></script>
+<script src="../mini.js/nav.js"></script>
+<script src="../mini.js/footer.js"></script>
+<script src="../mini.js/resource_admin.js" defer></script>
 
 </body>
 </html>

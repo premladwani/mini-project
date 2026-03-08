@@ -3,83 +3,232 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RFID Attendance – System Configuration</title>
-<link rel="stylesheet" href="../style.css/rfid_system_configuration.css">
-</head>
+<title>System Configuration</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css/nav.css">
+<link rel="stylesheet" href="../style.css/rfid_system_configuration.css">
+
+</head>
 <body>
 
-<h1>RFID Attendance – System Configuration 
-<button class="theme-btn" onclick="toggleTheme()">Toggle Theme</button>
-</h1>
+<!-- TOPBAR -->
+<div class="topbar">
+<div class="rfid-btn" onclick="toggleSidebar()">
+<div class="hamburger-menu">
+<span></span>
+<span></span>
+<span></span>
+</div>
+</div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+<div class="sidebar-header">
+<h2>RFID Panel</h2>
+<span class="close-btn" onclick="toggleSidebar()">✕</span>
+</div>
+
+<!-- SEARCH -->
+<div class="search">
+<input type="text" id="searchInput" placeholder="Search menu..." onkeyup="filterLinks()">
+</div>
+
+<!-- NAV LINKS -->
+<div class="nav-links">
+<a href="dashboard.html">🏠 Dashboard</a>
+<a href="user_management.html">👥 User Management</a>
+<a href="resource_admin.html">📦 Resource Admin</a>
+<a href="rfid_system_configuration.html" class="active">⚙ System Config</a>
+<a href="reports.html">📊 Reports & Export</a>
+<a href="audit_logs.html">🧾 Audit Logs</a>
+</div>
+
+<!-- LOGOUT BUTTON -->
+<div class="logout-section">
+<button class="logout-btn" onclick="handleLogout()">🚪 Logout</button>
+</div>
+
+<!-- PROFILE -->
+<div class="profile">
+<img src="https://i.pravatar.cc/100">
+<div class="profile-info">
+<div>Admin</div>
+<div style="font-size:13px;opacity:0.7;">System Manager</div>
+</div>
+</div>
+
+<button class="toggle" onclick="toggleTheme()">Toggle Theme</button>
+</div>
+
+<!-- PAGE CONTENT -->
+<div class="content">
 
 <div class="container">
 
+<h1>RFID SYSTEM CONFIGURATION</h1>
+
+<div class="theme-toggle">
+<button onclick="toggleTheme()" id="themeBtn" class="theme-btn">☀ Light Mode</button>
+</div>
+
+<!-- USER REGISTRATION SETTINGS -->
 <div class="section">
-<h3>General Settings</h3>
-<input type="text" id="systemName" placeholder="System Name">
-<input type="text" id="institutionName" placeholder="Institution Name">
-<select id="language">
-<option>English</option>
-<option>Hindi</option>
+
+<h3>User Registration Settings</h3>
+
+<label>
+<input type="checkbox" id="allowRegistration">
+Allow New User Registration
+</label>
+
+<label>Default User Role</label>
+<select id="defaultRole">
+<option>Student</option>
+<option>Teacher</option>
+<option>Administrator</option>
 </select>
+
 </div>
 
+<!-- ROLE MANAGEMENT -->
 <div class="section">
-<h3>Academic Settings</h3>
-<input type="text" id="academicYear" placeholder="Academic Year (2025-2026)">
-<select id="semester">
-<option>Semester 1</option>
-<option>Semester 2</option>
-<option>Semester 3</option>
-<option>Semester 4</option>
-<option>Semester 5</option>
-<option>Semester 6</option>
-<option>Semester 7</option>
-<option>Semester 8</option>
+
+<h3>Role Management</h3>
+
+<label>
+<input type="checkbox" id="roleAccess">
+Enable Role Based Access
+</label>
+
+<label>Maximum Administrators Allowed</label>
+<input type="number" id="maxAdmins" value="5">
+
+</div>
+
+<!-- PASSWORD POLICY -->
+<div class="section">
+
+<h3>Password Policy</h3>
+
+<label>Minimum Password Length</label>
+<input type="number" id="passwordLength" value="8">
+
+<label>
+<input type="checkbox" id="requireSpecial">
+Require Special Characters
+</label>
+
+<label>Account Lock After Failed Attempts</label>
+<input type="number" id="failedAttempts" value="3">
+
+</div>
+
+<!-- PERMISSION DEFAULTS -->
+<div class="section">
+
+<h3>Default Permissions for New Users</h3>
+
+<label><input type="checkbox" id="permRead" checked> Read</label>
+<label><input type="checkbox" id="permWrite"> Write</label>
+<label><input type="checkbox" id="permDelete"> Delete</label>
+<label><input type="checkbox" id="permApprove"> Approve</label>
+
+</div>
+
+<!-- DEPARTMENT SETTINGS -->
+<div class="section">
+
+<h3>Department Settings</h3>
+
+<label>
+<input type="checkbox" id="multiDepartment">
+Allow Multiple Departments
+</label>
+
+<label>
+<input type="checkbox" id="departmentRequired" checked>
+Department Required for Users
+</label>
+
+</div>
+
+<!-- ACCOUNT STATUS -->
+<div class="section">
+
+<h3>Account Status Settings</h3>
+
+<label>Default User Status</label>
+
+<select id="defaultStatus">
+<option>Active</option>
+<option>Pending</option>
+<option>Inactive</option>
 </select>
+
 </div>
 
-<div class="section">
-<h3>Attendance Rules</h3>
-<label>Late Threshold (minutes):</label><br>
-<input type="number" id="lateThreshold" value="10"><br>
-<label>Minimum Attendance Required (%):</label><br>
-<input type="number" id="minAttendance" value="75">
-</div>
-
-<div class="section">
-<h3>Security Settings</h3>
-<label>Auto Logout (minutes):</label><br>
-<input type="number" id="autoLogout" value="15"><br>
-<input type="password" id="adminPassword" placeholder="New Admin Password"><br>
-<input type="checkbox" id="twoFactor"> Enable Two-Factor Authentication
-</div>
-
-<div class="section">
-<h3>Notification Settings</h3>
-<input type="checkbox" id="notifyLow" checked> Low Attendance Alerts<br>
-<input type="checkbox" id="notifyDevice" checked> Device Offline Alerts<br>
-<input type="checkbox" id="emailReports"> Email Reports
-</div>
-
-<button class="save-btn" onclick="saveConfig()">Save Configuration</button>
-<button class="reset-btn" onclick="openModal()">Reset</button>
+<button class="save-btn" onclick="saveSettings()">Save Settings</button>
+<button class="reset-btn" onclick="openResetModal()">Reset</button>
 
 <div class="success" id="successMsg">
-✔ Configuration Saved Successfully!
+Settings Saved Successfully
 </div>
 
+<!-- POPUP MODAL -->
+<div class="modal" id="successModal">
+<div class="modal-content">
+<div class="modal-header">
+<h3> Success!</h3>
+</div>
+<div class="modal-body">
+<p>Your system configuration has been saved successfully.</p>
+<p>All settings have been updated and applied.</p>
+</div>
+<div class="modal-footer">
+<button class="modal-btn" onclick="closeSuccessModal()">OK</button>
+</div>
+</div>
 </div>
 
+<!-- RESET CONFIRMATION MODAL -->
 <div class="modal" id="resetModal">
 <div class="modal-content">
-<p>Are you sure you want to reset all settings?</p>
-<button onclick="resetConfig()" class="save-btn">Yes</button>
-<button onclick="closeModal()" class="reset-btn">Cancel</button>
+<div class="modal-header reset-header">
+<h3> Reset All Settings?</h3>
+</div>
+<div class="modal-body">
+<p>Are you sure you want to reset all settings to default values?</p>
+<p>This action cannot be undone.</p>
+</div>
+<div class="modal-footer">
+<button class="reset-modal-btn" onclick="confirmReset()">Reset</button>
+<button class="cancel-modal-btn" onclick="closeResetModal()">Cancel</button>
+</div>
 </div>
 </div>
 
-<script src="./rfid_system_configuration.js" defer></script>
+<!-- RESET SUCCESS MODAL -->
+<div class="modal" id="resetSuccessModal">
+<div class="modal-content">
+<div class="modal-header reset-header">
+<h3> Reset Complete!</h3>
+</div>
+<div class="modal-body">
+<p>All settings have been reset to default values.</p>
+<p>Your configuration has been cleared.</p>
+</div>
+<div class="modal-footer">
+<button class="modal-btn" onclick="closeResetSuccessModal()">OK</button>
+</div>
+</div>
+</div>
+
+</div>
+
+<script src="../mini.js/nav.js"></script>
+<script src="../mini.js/rfid_system_configuration.js"></script>
+
 </body>
 </html>

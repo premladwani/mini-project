@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>RFID Attendance System</title>
+<title>RFID Attendance System - User Portal</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../style.css/nav.css">
@@ -12,96 +12,62 @@
 
 <body>
 
-
 <!-- TOPBAR -->
-
 <div class="topbar">
-
 <div class="rfid-btn" onclick="toggleSidebar()">
-
 <div class="hamburger-menu">
 <span></span>
 <span></span>
 <span></span>
 </div>
-
 </div>
-
 </div>
-
-
 
 <!-- SIDEBAR -->
-
 <div class="sidebar" id="sidebar">
 
 <div class="sidebar-header">
-
-<h2>RFID Panel</h2>
-
+<h2>User Portal</h2>
 <span class="close-btn" onclick="toggleSidebar()">✕</span>
-
 </div>
-
 
 <!-- SEARCH -->
-
 <div class="search">
-
 <input type="text" id="searchInput" placeholder="Search menu..." onkeyup="filterLinks()">
+</div>
+
+<!-- NAV LINKS -->
+<div class="nav-links">
+
+<a href="userdashboard.html" class="active">🏠 Dashboard</a>
+
+<a href="help.html">❓ Help & Support</a>
 
 </div>
 
-
-<!-- NAV LINKS -->
-
-<div class="nav-links">
-
-<a href="dashboard.html" class="active">🏠 Dashboard</a>
-
-<a href="user_management.html">👥 User Management</a>
-
-<a href="resource_admin.html">📦 Resource Admin</a>
-
-<a href="rfid_system_configuration.html">⚙ System Config</a>
-
-<a href="reports.html">📊 Reports & Export</a>
-
-<a href="audit_logs.html">🧾 Audit Logs</a>
-
+<!-- PROFILE SECTION -->
+<div class="profile-section">
+<div class="profile">
+<img src="https://i.pravatar.cc/100">
+<div class="profile-info">
+<div>User</div>
+<div style="font-size:13px;opacity:0.7;">Student Portal</div>
+</div>
+</div>
 </div>
 
 <!-- LOGOUT BUTTON -->
-
 <div class="logout-section">
-
 <button class="logout-btn" onclick="handleLogout()">🚪 Logout</button>
-
 </div>
 
-<!-- PROFILE -->
-
-<div class="profile">
-
-<img src="https://i.pravatar.cc/100">
-
-<div class="profile-info">
-
-<div>Admin</div>
-<div style="font-size:13px;opacity:0.7;">System Manager</div>
+<button class="toggle" onclick="toggleTheme()">Toggle Theme</button>
 
 </div>
-
-</div>
-
-
-</div>
-
-
 
 <!-- PAGE CONTENT -->
-
-
+<div class="content">
+</div>
 
 <script src="../mini.js/nav.js"></script>
 

@@ -13,6 +13,7 @@
 .srfid-footer {
   background: var(--footer-bg-light);
   padding: 36px 0 24px 0;
+  margin-top: 40px;
   font-family: 'Segoe UI', Arial, sans-serif;
   font-size: 16px;
   color: var(--footer-text-light);
