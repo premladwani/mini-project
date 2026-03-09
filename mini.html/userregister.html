@@ -24,6 +24,7 @@
                     <input type="password" id="loginPassword" required>
                     <label for="">Password</label>
                     <i class="fa-solid fa-lock"></i>
+                    <i class="fa-solid fa-eye" id="toggleLoginPassword" onclick="togglePassword('loginPassword', 'toggleLoginPassword')" style="cursor: pointer; position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
                 </div>
 
                 <div class="forgot-password slide-element">
@@ -36,7 +37,7 @@
                 </div>
 
                 <div class="field-wrapper slide-element">
-                    <button class="submit-button" type="submit">Login</button>
+                  <a href="../mini.html/userdashboard.html"><button class="submit-button" type="button">Login</button></a>
                 </div>
 
                 <div class="switch-link slide-element">
@@ -80,10 +81,11 @@
                     <input type="password" id="regPassword" required>
                     <label for="">Password</label>
                     <i class="fa-solid fa-lock"></i>
+                    <i class="fa-solid fa-eye" id="toggleRegPassword" onclick="togglePassword('regPassword', 'toggleRegPassword')" style="cursor: pointer; position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
                 </div>
 
                 <div class="field-wrapper slide-element">
-                  <a href="../mini.html/userdashboard.html"><button class="submit-button" type="submit">Register</button></a>
+                  <button class="submit-button" type="submit">Register</button>
                 </div>
 
                 <div class="switch-link slide-element">
@@ -99,6 +101,21 @@
     </div>
 
     <script>
+    function togglePassword(inputId, toggleIconId) {
+      const passwordInput = document.getElementById(inputId);
+      const toggleIcon = document.getElementById(toggleIconId);
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+      } else {
+        passwordInput.type = 'password';
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+      }
+    }
+    
     function handleLogin(event) {
       event.preventDefault();
       const email = document.getElementById('loginEmail').value;
@@ -110,7 +127,7 @@
       if(user) {
         localStorage.setItem('currentUser', JSON.stringify(user));
         localStorage.setItem('isLoggedIn', 'true');
-        window.location.href="userdashboard.html";
+        window.location.href="../mini.html/userdashboard.html";
       } else {
         alert('Invalid email or password');
       }
@@ -145,12 +162,7 @@
       localStorage.setItem('isLoggedIn', 'true');
       
       alert('Registration successful! Welcome ' + name);
-      window.location.href="userdashboard.html";
-    }
-    
-    function handleRegister(event) {
-      event.preventDefault();
-      window.location.href="minids2.html";
+      window.location.href="../mini.html/userdashboard.html";
     }
     </script>
     <script src="../mini.js/login.js"></script>

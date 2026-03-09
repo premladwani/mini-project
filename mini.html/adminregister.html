@@ -26,6 +26,7 @@
                     <input type="password" id="loginPassword" required>
                     <label for="">Password</label>
                     <i class="fa-solid fa-lock"></i>
+                    <i class="fa-solid fa-eye" id="toggleAdminLoginPassword" onclick="togglePassword('loginPassword', 'toggleAdminLoginPassword')" style="cursor: pointer; position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
                 </div>
 
                 <div class="forgot-password slide-element">
@@ -38,7 +39,7 @@
                 </div>
 
                 <div class="field-wrapper slide-element">
-                    <button class="submit-button" type="submit">Login</button>
+                   <a href="../mini.html/dashboard.html"><button class="submit-button" type="button">Login</button></a>
                 </div>
 
                 <div class="switch-link slide-element">
@@ -99,6 +100,21 @@
 
 <script>
 
+function togglePassword(inputId, toggleIconId) {
+  const passwordInput = document.getElementById(inputId);
+  const toggleIcon = document.getElementById(toggleIconId);
+  
+  if (passwordInput.type === 'password') {
+    passwordInput.type = 'text';
+    toggleIcon.classList.remove('fa-eye');
+    toggleIcon.classList.add('fa-eye-slash');
+  } else {
+    passwordInput.type = 'password';
+    toggleIcon.classList.remove('fa-eye-slash');
+    toggleIcon.classList.add('fa-eye');
+  }
+}
+
 function handleLogin(event) {
   event.preventDefault();
 
@@ -112,7 +128,7 @@ function handleLogin(event) {
   if(admin){
     localStorage.setItem('currentAdmin', JSON.stringify(admin));
     localStorage.setItem('isLoggedIn', 'true');
-    window.location.href="admindashboard.html";
+    window.location.href="dashboard.html";
   }else{
     alert('Invalid admin email or password');
   }
@@ -149,7 +165,7 @@ function handleRegister(event) {
 
   alert('Admin registration successful! Welcome ' + name);
 
-  window.location.href="admindashboard.html";
+  window.location.href="dashboard.html";
 }
 
 </script>
