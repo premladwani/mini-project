@@ -123,6 +123,17 @@ function displayUserInfo() {
             <div><strong>RFID Number:</strong> ${savedRFID}</div>
         </div>
     `;
+    
+    // Update sidebar profile information
+    const profileName = document.getElementById('profileName');
+    const profileEmail = document.getElementById('profileEmail');
+    const profilePhone = document.getElementById('profilePhone');
+    const profileRFID = document.getElementById('profileRFID');
+    
+    if(profileName) profileName.textContent = savedName;
+    if(profileEmail) profileEmail.textContent = savedEmail;
+    if(profilePhone) profilePhone.textContent = savedPhone;
+    if(profileRFID) profileRFID.textContent = savedRFID;
 }
 
 function saveUser() {

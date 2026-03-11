@@ -128,6 +128,34 @@ window.location.href="login.html";
 
 }
 
+function toggleTheme() {
+    const body = document.body;
+    const themeBtn = document.getElementById('themeBtn');
+    
+    if (body.classList.contains('dark')) {
+        body.classList.remove('dark');
+        themeBtn.textContent = ' Dark Mode';
+        localStorage.setItem('theme', 'light');
+    } else {
+        body.classList.add('dark');
+        themeBtn.textContent = ' Light Mode';
+        localStorage.setItem('theme', 'dark');
+    }
+}
+
+// Initialize theme on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const savedTheme = localStorage.getItem('theme');
+    const themeBtn = document.getElementById('themeBtn');
+    
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark');
+        if (themeBtn) themeBtn.textContent = ' Light Mode';
+    } else {
+        if (themeBtn) themeBtn.textContent = ' Dark Mode';
+    }
+});
+
 loadSummary();
 loadHistory();
 loadNotifications();

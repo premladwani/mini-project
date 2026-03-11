@@ -101,6 +101,15 @@
     </div>
 
     <script>
+    // Check URL parameter to show register form by default
+    window.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('showRegister') === 'true') {
+            // Add the toggled class to show register form
+            document.querySelector('.auth-wrapper').classList.add('toggled');
+        }
+    });
+    
     function togglePassword(inputId, toggleIconId) {
       const passwordInput = document.getElementById(inputId);
       const toggleIcon = document.getElementById(toggleIconId);
